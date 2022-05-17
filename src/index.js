@@ -8,13 +8,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 ///////////////// [ MONGO-DB CONNECTION ] /////////////////
-mongoose.connect("mongodb+srv://Pritam:pritam123@cluster0.2crug.mongodb.net/Project-4", {
+mongoose.connect("mongodb+srv://Pritam:pritam123@cluster0.2crug.mongodb.net/group79Database", {
     useNewUrlParser: true
 })
     .then(() => console.log("MongoDb is connected"))
     .catch(err => console.log(err))
 
 ///////////////// [ ROOT API ] /////////////////
+// app.use('/', require('./router/redirect'))
 app.use('/', route)
 
 ///////////////// [ SERVER CONNECTION ] /////////////////
