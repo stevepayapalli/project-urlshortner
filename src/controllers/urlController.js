@@ -4,7 +4,7 @@ const validUrl = require("valid-url");
 const baseUrl = "http://localhost:3000"; 
 
 
-const redis = require("redis");
+const redis = require("redis");     //// STARTING REDIS CODE FROM HERE
 const { promisify } = require("util");  /// don't know from where it is coming..??
 
 const redisClient = redis.createClient(
@@ -28,15 +28,22 @@ redisClient.on("connect", async function () {
 //Connection setup for redis
 
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
-const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);   /////// END
+const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);   /////// ENDING REDIS CODE HERE.
 
-
+///////////////////// creating urls ///////////////
 
 const createUrl = async function (req, res) {
   try {
     let long_url = req.body.longUrl;
 
-    if (!long_url) {return res.status(400).send({status: false,message: "Please provide URL in request body."});}
+    const bodyData = req.body
+    
+    if (Object.keys(bodyData).length == 0){return res.status(400).send({status:false, message:"Reques body is empty."})}
+
+    if (Object.keys(bodyData) != "longUrl"){return res.status(400).send({status:false,message:"Long URL is not present in request body."})}
+
+    if (Object.values(long_url).length == 0) {return res.status(400).send({status: false,message: "Please provide URL value in request body."});}
+
     if (!validUrl.isUri(long_url)) {return res.status(400).send({ status: false, message: "Please enter valid long URL." });}
 
     const urlData = await urlModel.findOne({ longUrl: long_url })
@@ -58,9 +65,11 @@ const createUrl = async function (req, res) {
   }
 };
 
+/////////////////// [ getting urls ] /////////////////
+
 const getUrl = async function (req, res) {
   const getDataFromCache = await GET_ASYNC(`${req.params.urlCode}`);
-  let url = JSON.parse(getDataFromCache)
+  let url = JSON.parse(getDataFromCache)          //// ------->>> have doubt about this line...!!!
   if (url) {
     // console.log(getDataFromCache)
     return res.status(302).redirect(url.longUrl);
