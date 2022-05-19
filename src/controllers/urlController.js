@@ -60,14 +60,14 @@ const createUrl = async function (req, res) {
 
 const getUrl = async function (req, res) {
   const getDataFromCache = await GET_ASYNC(`${req.params.urlCode}`);
-  if (getDataFromCache) {
+  let url = JSON.parse(getDataFromCache)
+  if (url) {
     // console.log(getDataFromCache)
-    return res.status(302).send(getDataFromCache);
+    return res.status(302).redirect(url.longUrl);
     
   } 
   else {
-    const url_code = req.params.urlCode;
-    const urlData = await urlModel.findOne({ urlCode: url_code }).select({_id:0,longUrl:1});
+    const urlData = await urlModel.findOne({ urlCode: req.params.urlCode });
     if (!urlData) {
       return res
         .status(404)
@@ -76,7 +76,7 @@ const getUrl = async function (req, res) {
           message:
             "No URL is found with the given code. Please enter valid URL code",
         });}
-    await SET_ASYNC(`${req.params.urlCode}`, JSON.stringify(urlData.longUrl))
+    await SET_ASYNC(`${req.params.urlCode}`, JSON.stringify(urlData))
     res.status(302).redirect(urlData.longUrl);
     // console.log(urlData.longUrl)
   }
