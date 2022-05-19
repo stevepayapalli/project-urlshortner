@@ -71,7 +71,7 @@ const getUrl = async function (req, res) {
   const getDataFromCache = await GET_ASYNC(`${req.params.urlCode}`);
   let url = JSON.parse(getDataFromCache)          //// ------->>> have doubt about this line...!!!
   if (url) {
-    // console.log(getDataFromCache)
+    // console.log(JSON.parse(getDataFromCache))
     return res.status(302).redirect(url.longUrl);
     
   } 
